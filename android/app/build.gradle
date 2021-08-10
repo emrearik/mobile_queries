@@ -26,6 +26,10 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def googleMapApiKey = properties.getProperty('googleMap.apiKey') // Notice we get the property we the exact same name we wrote in the local.properties file
+
 android {
     compileSdkVersion 30
 
@@ -41,6 +45,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+        manifestPlaceholders = [googleMapApiKey: googleMapApiKey]
     }
 
     buildTypes {

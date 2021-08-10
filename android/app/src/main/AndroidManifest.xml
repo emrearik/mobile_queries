@@ -9,7 +9,7 @@
         android:label="Mobil Sorgular"
         android:icon="@mipmap/ic_launcher">
 
-      <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBNy8QEAXzEr4wI7SgRoboBrc2FXgcc7Go" />
+      <meta-data android:name="com.google.android.geo.API_KEY" android:value="${googleMapApiKey}" />
 
         <activity
             android:name=".MainActivity"
