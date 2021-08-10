@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "831339056173",
+    "firebase_url": "https://mobilsorgular-default-rtdb.firebaseio.com",
+    "project_id": "mobilsorgular",
+    "storage_bucket": "mobilsorgular.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831339056173:android:954934ab0cfc87f711bca4",
+        "android_client_info": {
+          "package_name": "com.emrearik.mobilsorgular"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831339056173-li54cni27fpu104k4bj9kuscf036uuvq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcCvjLjTWRWvZ3ZtlgeaPUpQWtBSUi840"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831339056173-li54cni27fpu104k4bj9kuscf036uuvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831339056173:android:fc2c2e4dc18bad2911bca4",
+        "android_client_info": {
+          "package_name": "com.example.yazlab2_mobil_sorgular"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831339056173-li54cni27fpu104k4bj9kuscf036uuvq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcCvjLjTWRWvZ3ZtlgeaPUpQWtBSUi840"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831339056173-li54cni27fpu104k4bj9kuscf036uuvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
