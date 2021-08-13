@@ -1,4 +1,4 @@
-# yazlab2_mobil_sorgular
+# Mobile Queries
 
 A new Flutter project.
 
