@@ -37,7 +37,11 @@ The New York City Taxi and Limousine Commission (TLC) deals with yellow cabs, gr
    GOOGLE_MAP_API_KEY="<API_KEY_HERE>"
    ```
    
- - Debug and run project.
+ - Go to terminal and run flutter.
+   ```
+   flutter run
+   ```
+   
 
 
 ## Design
