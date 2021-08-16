@@ -1,11 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:yazlab2_mobil_sorgular/pages/Anasayfa.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip1.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip2.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip3.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip3_mapView.dart';
+import 'pages/pages.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +20,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color.fromRGBO(253, 216, 53, 1),
         accentColor: Color.fromRGBO(253, 216, 53, 1),
       ),
-      home: Anasayfa(),
+      home: HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }

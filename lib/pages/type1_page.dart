@@ -1,15 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:yazlab2_mobil_sorgular/data/TaksiVerileri.dart';
 import 'package:yazlab2_mobil_sorgular/theme/top_bar.dart';
-import 'package:yazlab2_mobil_sorgular/widgets/yolculuk_bilgisi_widget.dart';
+import 'package:yazlab2_mobil_sorgular/widgets/widgets.dart';
 
-class Tip1Sayfasi extends StatefulWidget {
+class Type1Page extends StatefulWidget {
   @override
-  _Tip1SayfasiState createState() => _Tip1SayfasiState();
+  _Type1PageState createState() => _Type1PageState();
 }
 
-class _Tip1SayfasiState extends State<Tip1Sayfasi> {
+class _Type1PageState extends State<Type1Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +20,7 @@ class _Tip1SayfasiState extends State<Tip1Sayfasi> {
               Container(
                 margin: EdgeInsets.all(30),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     GestureDetector(
                       onTap: () {
@@ -42,14 +41,17 @@ class _Tip1SayfasiState extends State<Tip1Sayfasi> {
                         ),
                       ),
                     ),
-                    Text(
-                      "En Uzun Mesafeli 5 Yolculuktaki\n Gün ve Mesafeler ",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        fontFamily: 'Poppins',
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(50, 0, 0, 0),
+                      child: Text(
+                        "Days and Distances \n of The 5 Longest Trip ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontFamily: 'Poppins',
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -58,24 +60,33 @@ class _Tip1SayfasiState extends State<Tip1Sayfasi> {
           ),
           Flexible(
             child: FutureBuilder(
-              future: getData(),
-              builder: (context,
-                  AsyncSnapshot<List<BirlestirilmisVeriler>> snapshot) {
+              future: getDataType1(),
+              builder: (context, AsyncSnapshot<List> snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       itemCount: snapshot.data.length,
                       itemBuilder: (BuildContext context, int index) {
-                        return YolculukBilgisiWidget(
-                            pickupDate: snapshot.data[index].tpepPickupDatetime,
-                            dropoffDate:
-                                snapshot.data[index].tpepDropoffDatetime,
-                            binisYeri: snapshot.data[index].baslangicNoktasi,
-                            inisYeri: snapshot.data[index].bitisNoktasi,
-                            yolcuSayisi: snapshot.data[index].passengerCount,
-                            tutar: snapshot.data[index].totalAmount,
-                            mesafe: snapshot.data[index].tripDistance);
+                        return TripInformationWidget(
+                          pickupDate: snapshot.data[index]["taxiDatas"]
+                                  ["tpep_pickup_datetime"]
+                              .toString(),
+                          dropoffDate: snapshot.data[index]["taxiDatas"]
+                                  ["tpep_dropoff_datetime"]
+                              .toString(),
+                          pickupLocation: snapshot.data[index]["pickupLocation"]
+                              ["Borough"],
+                          dropoffLocation: snapshot.data[index]
+                              ["dropoffLocation"]["Borough"],
+                          passengerCount: snapshot.data[index]["taxiDatas"]
+                              ["passenger_count"],
+                          amount: snapshot.data[index]["taxiDatas"]
+                              ["total_amount"],
+                          distance: snapshot.data[index]["taxiDatas"]
+                                  ["trip_distance"]
+                              .toDouble(),
+                        );
                       });
                 } else {
                   return Center(
@@ -91,9 +102,8 @@ class _Tip1SayfasiState extends State<Tip1Sayfasi> {
   }
 }
 
-Future<List<BirlestirilmisVeriler>> getData() async {
-  List<BirlestirilmisVeriler> birlestirilmisVeriler = [];
-
+Future<List> getDataType1() async {
+  List list = [];
   final databaseReference = FirebaseFirestore.instance;
 
   var snapshot = await databaseReference
@@ -110,25 +120,18 @@ Future<List<BirlestirilmisVeriler>> getData() async {
         .where("LocationID", isEqualTo: int.parse(data["PULocationID"]))
         .get();
 
-    var baslangicNoktasi = puLocationQuery.docs[0].data();
-
     var doLocationQuery = await databaseReference
         .collection("lokasyonlar")
         .where("LocationID", isEqualTo: int.parse(data["DOLocationID"]))
         .get();
 
-    var bitisNoktasi = doLocationQuery.docs[0].data();
-
-    Map<String, dynamic> taksiVerileri = {
-      "veriler": data,
-      "baslangicNoktasi": baslangicNoktasi,
-      "bitisNoktasi": bitisNoktasi
+    Map<String, dynamic> oneTaxiData = {
+      "taxiDatas": data,
+      "pickupLocation": puLocationQuery.docs[0].data(),
+      "dropoffLocation": doLocationQuery.docs[0].data(),
     };
 
-    var birlestirilmisVeri =
-        BirlestirilmisVeriler.fromJsonFormattedDate(taksiVerileri);
-
-    birlestirilmisVeriler.add(birlestirilmisVeri);
+    list.add(oneTaxiData);
   }
-  return birlestirilmisVeriler;
+  return list;
 }

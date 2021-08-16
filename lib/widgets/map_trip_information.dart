@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class MapYolculukBilgileri extends StatelessWidget {
+class MapTripInformationWidget extends StatelessWidget {
   final String pickupDate;
   final String dropoffDate;
-  final String binisYeri;
-  final String inisYeri;
+  final String pickupLocation;
+  final String dropoffLocation;
   final int passengerCount;
   final double tripDistance;
   final double totalAmount;
-  const MapYolculukBilgileri({
+  MapTripInformationWidget({
     Key key,
     this.pickupDate,
     this.dropoffDate,
-    this.binisYeri,
-    this.inisYeri,
+    this.pickupLocation,
+    this.dropoffLocation,
     this.passengerCount,
     this.tripDistance,
     this.totalAmount,
   }) : super(key: key);
 
+  var formattedDate = new DateFormat('dd/MM/yyyy H:m:s');
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -126,7 +128,10 @@ class MapYolculukBilgileri extends StatelessWidget {
                         children: [
                           SizedBox(height: 13),
                           Text(
-                            pickupDate,
+                            formattedDate.format(
+                              DateTime.fromMicrosecondsSinceEpoch(
+                                  int.parse(pickupDate) * 1000000),
+                            ),
                             style: TextStyle(
                               color: Colors.grey,
                               fontFamily: 'Poppins',
@@ -135,7 +140,7 @@ class MapYolculukBilgileri extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            binisYeri,
+                            pickupLocation,
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: 'Poppins',
@@ -151,7 +156,10 @@ class MapYolculukBilgileri extends StatelessWidget {
                           ),
                           SizedBox(height: 10),
                           Text(
-                            dropoffDate,
+                            formattedDate.format(
+                              DateTime.fromMicrosecondsSinceEpoch(
+                                  int.parse(dropoffDate) * 1000000),
+                            ),
                             style: TextStyle(
                               color: Colors.grey,
                               fontFamily: 'Poppins',
@@ -160,7 +168,7 @@ class MapYolculukBilgileri extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            inisYeri,
+                            dropoffLocation,
                             style: TextStyle(
                               color: Colors.black,
                               fontFamily: 'Poppins',
@@ -181,7 +189,7 @@ class MapYolculukBilgileri extends StatelessWidget {
                       children: [
                         SizedBox(height: 13),
                         Text(
-                          "Yolcu Sayısı: ",
+                          "Passenger Count: ",
                           style: TextStyle(
                             color: Colors.grey,
                             fontFamily: 'Poppins',
@@ -206,7 +214,7 @@ class MapYolculukBilgileri extends StatelessWidget {
                         ),
                         SizedBox(height: 3),
                         Text(
-                          "Mesafe: ",
+                          "Distance: ",
                           style: TextStyle(
                             color: Colors.grey,
                             fontFamily: 'Poppins',
@@ -231,7 +239,7 @@ class MapYolculukBilgileri extends StatelessWidget {
                         ),
                         SizedBox(height: 3),
                         Text(
-                          "Tutar: ",
+                          "Amount: ",
                           style: TextStyle(
                             color: Colors.grey,
                             fontFamily: 'Poppins',

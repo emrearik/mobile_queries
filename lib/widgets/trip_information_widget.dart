@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class YolculukBilgisiWidget extends StatefulWidget {
+class TripInformationWidget extends StatefulWidget {
   final String pickupDate;
   final String dropoffDate;
-  final String binisYeri;
-  final String inisYeri;
-  final int yolcuSayisi;
-  final double tutar;
-  final double mesafe;
+  final String pickupLocation;
+  final String dropoffLocation;
+  final int passengerCount;
+  final double amount;
+  final double distance;
 
-  const YolculukBilgisiWidget(
+  TripInformationWidget(
       {Key key,
       this.pickupDate,
       this.dropoffDate,
-      this.binisYeri,
-      this.inisYeri,
-      this.yolcuSayisi,
-      this.tutar,
-      this.mesafe})
+      this.pickupLocation,
+      this.dropoffLocation,
+      this.passengerCount,
+      this.amount,
+      this.distance})
       : super(key: key);
+
   @override
-  _YolculukBilgisiWidgetState createState() => _YolculukBilgisiWidgetState();
+  _TripInformationWidgetState createState() => _TripInformationWidgetState();
 }
 
-class _YolculukBilgisiWidgetState extends State<YolculukBilgisiWidget> {
+class _TripInformationWidgetState extends State<TripInformationWidget> {
+  var formattedDate = new DateFormat('dd/MM/yyyy H:m:s');
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -132,7 +135,10 @@ class _YolculukBilgisiWidgetState extends State<YolculukBilgisiWidget> {
                 children: [
                   SizedBox(height: 20),
                   Text(
-                    widget.pickupDate.toString(),
+                    formattedDate.format(
+                      DateTime.fromMicrosecondsSinceEpoch(
+                          int.parse(widget.pickupDate) * 1000000),
+                    ),
                     style: TextStyle(
                       color: Colors.grey,
                       fontFamily: 'Poppins',
@@ -141,7 +147,7 @@ class _YolculukBilgisiWidgetState extends State<YolculukBilgisiWidget> {
                     ),
                   ),
                   Text(
-                    widget.binisYeri,
+                    widget.pickupLocation,
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: 'Poppins',
@@ -157,7 +163,10 @@ class _YolculukBilgisiWidgetState extends State<YolculukBilgisiWidget> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    widget.dropoffDate.toString(),
+                    formattedDate.format(
+                      DateTime.fromMicrosecondsSinceEpoch(
+                          int.parse(widget.dropoffDate) * 1000000),
+                    ),
                     style: TextStyle(
                       color: Colors.grey,
                       fontFamily: 'Poppins',
@@ -166,7 +175,7 @@ class _YolculukBilgisiWidgetState extends State<YolculukBilgisiWidget> {
                     ),
                   ),
                   Text(
-                    widget.inisYeri,
+                    widget.dropoffLocation,
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: 'Poppins',
@@ -193,7 +202,7 @@ class _YolculukBilgisiWidgetState extends State<YolculukBilgisiWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Yolcu Sayısı: " + widget.yolcuSayisi.toString(),
+                      "Passenger Count: " + widget.passengerCount.toString(),
                       style: TextStyle(
                         color: Colors.grey,
                         fontFamily: 'Poppins',
@@ -202,7 +211,7 @@ class _YolculukBilgisiWidgetState extends State<YolculukBilgisiWidget> {
                       ),
                     ),
                     Text(
-                      "Mesafe: " + widget.mesafe.toString() + " mil",
+                      "Distance: " + widget.distance.toString() + " mil",
                       style: TextStyle(
                         color: Colors.grey,
                         fontFamily: 'Poppins',
@@ -213,7 +222,7 @@ class _YolculukBilgisiWidgetState extends State<YolculukBilgisiWidget> {
                   ],
                 ),
                 Text(
-                  widget.tutar.toString() + " \$",
+                  widget.amount.toString() + " \$",
                   style: TextStyle(
                     color: Colors.black,
                     fontFamily: 'Poppins',

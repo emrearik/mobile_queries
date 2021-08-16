@@ -1,22 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:yazlab2_mobil_sorgular/data/TaksiVerileri.dart';
-import 'package:yazlab2_mobil_sorgular/data/Tarih.dart';
-import 'package:yazlab2_mobil_sorgular/theme/top_bar.dart';
-import 'package:yazlab2_mobil_sorgular/widgets/yolculuk_bilgisi_widget.dart';
+import 'package:yazlab2_mobil_sorgular/data/Date.dart';
+import 'package:yazlab2_mobil_sorgular/theme/themes.dart';
+import 'package:yazlab2_mobil_sorgular/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 
-class Tip2SayfaVerileri extends StatefulWidget {
-  final Tarih tarih;
-  final String secilenLokasyon;
+class Type2Page extends StatefulWidget {
+  final Date date;
+  final String selectedLocation;
 
-  const Tip2SayfaVerileri({Key key, this.tarih, this.secilenLokasyon})
-      : super(key: key);
+  Type2Page({Key key, this.date, this.selectedLocation}) : super(key: key);
+
+  var formattedDate = new DateFormat('dd/MM/yyyy H:m:s');
+
   @override
-  _Tip2SayfaVerileriState createState() => _Tip2SayfaVerileriState();
+  _Type2PageState createState() => _Type2PageState();
 }
 
-class _Tip2SayfaVerileriState extends State<Tip2SayfaVerileri> {
+class _Type2PageState extends State<Type2Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +51,7 @@ class _Tip2SayfaVerileriState extends State<Tip2SayfaVerileri> {
                       ),
                     ),
                     Text(
-                      "İki Tarih Arasında Belirli Bir \nLokasyondan Hareket Eden Araç Sayısı",
+                      "Number of Vehicles Departing From\n A Given Location Between Two Dates",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -65,14 +66,13 @@ class _Tip2SayfaVerileriState extends State<Tip2SayfaVerileri> {
           ),
           Flexible(
             child: FutureBuilder(
-              future: getData(widget.tarih, widget.secilenLokasyon),
-              builder: (context,
-                  AsyncSnapshot<List<BirlestirilmisVeriler>> snapshot) {
+              future: getDataType2(widget.date, widget.selectedLocation),
+              builder: (context, AsyncSnapshot<List> snapshot) {
                 if (snapshot.hasData) {
                   return Column(
                     children: [
                       Text(
-                        "Seçilen Başlangıç Tarihi: ${DateFormat('dd/MM/yyyy').format(widget.tarih.startDate).toString()}",
+                        "Selected Start Date: ${DateFormat('dd/MM/yyyy').format(widget.date.startDate).toString()}",
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           color: Colors.grey,
@@ -80,7 +80,7 @@ class _Tip2SayfaVerileriState extends State<Tip2SayfaVerileri> {
                         ),
                       ),
                       Text(
-                        "Seçilen Bitiş Tarihi: ${DateFormat('dd/MM/yyyy').format(widget.tarih.endDate).toString()}",
+                        "Selected End Date: ${DateFormat('dd/MM/yyyy').format(widget.date.endDate).toString()}",
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           color: Colors.grey,
@@ -88,7 +88,7 @@ class _Tip2SayfaVerileriState extends State<Tip2SayfaVerileri> {
                         ),
                       ),
                       Text(
-                        "Toplam Araç Sayısı: " +
+                        "Total Vehicle Count: " +
                             snapshot.data.length.toString(),
                         style: TextStyle(
                           fontFamily: 'Poppins',
@@ -102,18 +102,25 @@ class _Tip2SayfaVerileriState extends State<Tip2SayfaVerileri> {
                             shrinkWrap: true,
                             itemCount: snapshot.data.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return YolculukBilgisiWidget(
-                                  pickupDate:
-                                      snapshot.data[index].tpepPickupDatetime,
-                                  dropoffDate:
-                                      snapshot.data[index].tpepDropoffDatetime,
-                                  binisYeri:
-                                      snapshot.data[index].baslangicNoktasi,
-                                  inisYeri: snapshot.data[index].bitisNoktasi,
-                                  yolcuSayisi:
-                                      snapshot.data[index].passengerCount,
-                                  tutar: snapshot.data[index].totalAmount,
-                                  mesafe: snapshot.data[index].tripDistance);
+                              return TripInformationWidget(
+                                pickupDate: snapshot.data[index]["taxiDatas"]
+                                        ["tpep_pickup_datetime"]
+                                    .toString(),
+                                dropoffDate: snapshot.data[index]["taxiDatas"]
+                                        ["tpep_dropoff_datetime"]
+                                    .toString(),
+                                pickupLocation: snapshot.data[index]
+                                    ["pickupLocation"]["Borough"],
+                                dropoffLocation: snapshot.data[index]
+                                    ["dropoffLocation"]["Borough"],
+                                passengerCount: snapshot.data[index]
+                                    ["taxiDatas"]["passenger_count"],
+                                amount: snapshot.data[index]["taxiDatas"]
+                                    ["total_amount"],
+                                distance: snapshot.data[index]["taxiDatas"]
+                                        ["trip_distance"]
+                                    .toDouble(),
+                              );
                             }),
                       ),
                     ],
@@ -132,57 +139,48 @@ class _Tip2SayfaVerileriState extends State<Tip2SayfaVerileri> {
   }
 }
 
-Future<List<BirlestirilmisVeriler>> getData(
-    Tarih tarih, String secilenLokasyon) async {
-  var baslangicTarihi = int.parse(
-      (DateTime.parse(tarih.startDate.toString()).millisecondsSinceEpoch / 1000)
+Future<List> getDataType2(Date date, String selectedLocation) async {
+  var startDate = int.parse(
+      (DateTime.parse(date?.startDate.toString()).millisecondsSinceEpoch / 1000)
           .toStringAsFixed(0));
-  var bitisTarihi = int.parse(
-      (DateTime.parse(tarih.endDate.toString()).millisecondsSinceEpoch / 1000)
+  var endDate = int.parse(
+      (DateTime.parse(date?.endDate.toString()).millisecondsSinceEpoch / 1000)
           .toStringAsFixed(0));
 
   final databaseReference = FirebaseFirestore.instance;
 
   var snapshot = await databaseReference
       .collection("veriler")
-      .where("PULocationID", isEqualTo: secilenLokasyon)
+      .where("PULocationID", isEqualTo: selectedLocation)
       .get();
 
-  List<BirlestirilmisVeriler> birlestirilmisVeriler = [];
+  List taxiDatas = [];
 
   for (var item in snapshot.docs) {
     var data = item.data();
-    if (data["tpep_pickup_datetime"] >= baslangicTarihi &&
-        data["tpep_pickup_datetime"] <= bitisTarihi) {
-      //yolculuk tespit edildi. ui de gösterilmek için hazırlanıyor.
-      //veri başlangıç lokasyonu bulunuyor.
+    if (data["tpep_pickup_datetime"] >= startDate &&
+        data["tpep_pickup_datetime"] <= endDate) {
+      //find pickup location.
       var puLocationQuery = await databaseReference
           .collection("lokasyonlar")
           .where("LocationID", isEqualTo: int.parse(data["PULocationID"]))
           .get();
 
-      var baslangicNoktasi = puLocationQuery.docs[0].data();
-      //veri bitiş lokasyonu bulunuyor.
+      //find dropoff location
       var doLocationQuery = await databaseReference
           .collection("lokasyonlar")
           .where("LocationID", isEqualTo: int.parse(data["DOLocationID"]))
           .get();
 
-      var bitisNoktasi = doLocationQuery.docs[0].data();
-
-      //alınan veri bilgileri, başlangıç bilgileri, bitiş bilgileri alınır ve taksiverileri
-      //isimli listeye atanır.
-      Map<String, dynamic> taksiVerileri = {
-        "veriler": data,
-        "baslangicNoktasi": baslangicNoktasi,
-        "bitisNoktasi": bitisNoktasi
+      //create map with oneTaxiData and location information.
+      Map<String, dynamic> oneTaxiData = {
+        "taxiDatas": data,
+        "pickupLocation": puLocationQuery.docs[0].data(),
+        "dropoffLocation": doLocationQuery.docs[0].data(),
       };
 
-      // liste birlestirilmis veri kısmıyla yeni bir listeye dönüştürülür.
-      var birlestirilmisVeri =
-          BirlestirilmisVeriler.fromJsonFormattedDate(taksiVerileri);
-      birlestirilmisVeriler.add(birlestirilmisVeri);
+      taxiDatas.add(oneTaxiData);
     }
   }
-  return birlestirilmisVeriler;
+  return taxiDatas;
 }

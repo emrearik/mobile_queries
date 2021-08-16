@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MapUstKisim extends StatelessWidget {
-  const MapUstKisim({
+class MapTopWidget extends StatelessWidget {
+  const MapTopWidget({
     Key key,
   }) : super(key: key);
 
@@ -46,7 +46,7 @@ class MapUstKisim extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Belirli Bir Gündeki En Uzun Seyehatin Harita Üzerindeki Gösterimi",
+                    "Display on The Map of The Longest Trip on A Given Day",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,

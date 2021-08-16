@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip1.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip2.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip3.dart';
-import 'package:yazlab2_mobil_sorgular/widgets/anasayfa_islem_widget.dart';
+import 'package:yazlab2_mobil_sorgular/pages/pages.dart';
+import 'package:yazlab2_mobil_sorgular/pages/type2_page.dart';
+import 'package:yazlab2_mobil_sorgular/widgets/widgets.dart';
 
-class Anasayfa extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _AnasayfaState createState() => _AnasayfaState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _AnasayfaState extends State<Anasayfa> {
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,10 +34,10 @@ class _AnasayfaState extends State<Anasayfa> {
                         ),
                       ),
                       Text(
-                        "MOBİL SORGULAR",
+                        "MOBILE QUERIES",
                         style: TextStyle(
                           fontSize: 30,
-                          fontFamily: 'Georgia',
+                          fontFamily: 'Poppins',
                           fontWeight: FontWeight.bold,
                         ),
                       )
@@ -53,11 +52,11 @@ class _AnasayfaState extends State<Anasayfa> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Merhabalar, lütfen aşağıdan işlem seçiniz.",
+                    "Hello, please select type.",
                     style: TextStyle(fontFamily: 'Poppins'),
                   ),
                   Text(
-                    "İşlemler",
+                    "TYPES",
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -66,62 +65,50 @@ class _AnasayfaState extends State<Anasayfa> {
                   ),
                   SizedBox(height: 10),
                   GestureDetector(
-                    child: AnasayfaIslemWidget(
-                      tip: "TİP 1",
-                      islem:
-                          "En uzun Mesafeli 5 Yolculuğun\n Gün ve Mesafeleri",
-                      islemFontBoyutu: 14,
+                    child: HomepageTypeWidget(
+                      type: "TYPE 1",
+                      trip: "Days and Distances of the \n5 Longest Trips",
+                      tripFontSize: 14,
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Tip1Sayfasi(),
+                          builder: (context) => Type1Page(),
                         ),
                       );
                     },
                   ),
                   GestureDetector(
-                      child: AnasayfaIslemWidget(
-                        tip: "TİP 2",
-                        islem:
-                            "İki Tarih Arasında Belirli Bir \nLokasyondan Hareket Eden Araç Sayısı",
-                        islemFontBoyutu: 11,
+                      child: HomepageTypeWidget(
+                        type: "TYPE 2",
+                        trip:
+                            "Number of Vehicles Departing From\n A Given Location Between Two Dates",
+                        tripFontSize: 11,
                       ),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Tip2Sayfasi(),
+                            builder: (context) => Type2SelectPage(),
                           ),
                         );
                       }),
                   GestureDetector(
-                    child: AnasayfaIslemWidget(
-                      tip: "TİP 3",
-                      islem:
-                          "Belirli Bir Gündeki En Uzun Seyehatin \nBilgileri ve Yolu ",
-                      islemFontBoyutu: 12,
+                    child: HomepageTypeWidget(
+                      type: "TYPE 3",
+                      trip: "The Longest Trips of The Selected Date",
+                      tripFontSize: 12,
                     ),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Tip3Sayfasi(),
+                          builder: (context) => Type3SelectPage(),
                         ),
                       );
                     },
                   ),
-                  Center(
-                    child: Text(
-                      "Mobil Sorgular\n Emre ARIK - Halim Ahat AKTURAN",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),

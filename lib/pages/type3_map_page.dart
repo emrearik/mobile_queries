@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:yazlab2_mobil_sorgular/data/TaksiVerileri.dart';
-import 'package:yazlab2_mobil_sorgular/widgets/map_ust_kisim_widget.dart';
-import 'package:yazlab2_mobil_sorgular/widgets/map_yolculuk_bilgileri.dart';
+import 'package:yazlab2_mobil_sorgular/widgets/widgets.dart';
 
 LatLng SOURCE_LOCATION = LatLng(0, 0);
 LatLng DEST_LOCATION = LatLng(0, 0);
@@ -17,15 +15,15 @@ const double CAMERA_BEARING = 30;
 const double PIN_VISIBLE_POSITIPN = 20;
 const double PIN_INVISIBLE_POSITION = -220;
 
-class Tip3HaritaSayfasi extends StatefulWidget {
-  final DateTime secilenTarih;
+class Type3MapPage extends StatefulWidget {
+  final DateTime selectedDate;
 
-  const Tip3HaritaSayfasi({Key key, this.secilenTarih}) : super(key: key);
+  const Type3MapPage({Key key, this.selectedDate}) : super(key: key);
   @override
-  _Tip3HaritaSayfasiState createState() => _Tip3HaritaSayfasiState();
+  _Type3MapPageState createState() => _Type3MapPageState();
 }
 
-class _Tip3HaritaSayfasiState extends State<Tip3HaritaSayfasi> {
+class _Type3MapPageState extends State<Type3MapPage> {
   Completer<GoogleMapController> _controller = Completer();
   BitmapDescriptor sourceIcon;
   BitmapDescriptor destinationIcon;
@@ -76,13 +74,13 @@ class _Tip3HaritaSayfasiState extends State<Tip3HaritaSayfasi> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: getData(widget.secilenTarih),
-        builder: (context, AsyncSnapshot<BirlestirilmisVeriler> snapshot) {
+        future: getData(widget.selectedDate),
+        builder: (context, AsyncSnapshot<Map> snapshot) {
           if (snapshot.hasData) {
-            SOURCE_LOCATION = LatLng(snapshot.data.baslangicNoktasiLatitude,
-                snapshot.data.baslangicNoktasiLongitude);
-            DEST_LOCATION = LatLng(snapshot.data.bitisNoktasiLatitude,
-                snapshot.data.bitisNoktasiLongitude);
+            SOURCE_LOCATION = LatLng(snapshot.data["pickupLocation"]["lat"],
+                snapshot.data["pickupLocation"]["long"]);
+            DEST_LOCATION = LatLng(snapshot.data["dropoffLocation"]["lat"],
+                snapshot.data["dropoffLocation"]["long"]);
 
             CameraPosition initialCameraPosition = CameraPosition(
               zoom: CAMERA_ZOOM,
@@ -115,7 +113,7 @@ class _Tip3HaritaSayfasiState extends State<Tip3HaritaSayfasi> {
                   top: 25,
                   left: 0,
                   right: 0,
-                  child: MapUstKisim(),
+                  child: MapTopWidget(),
                 ),
                 Positioned(
                   left: 0,
@@ -126,14 +124,23 @@ class _Tip3HaritaSayfasiState extends State<Tip3HaritaSayfasi> {
                       shrinkWrap: true,
                       itemCount: 1,
                       itemBuilder: (BuildContext context, int index) {
-                        return MapYolculukBilgileri(
-                          pickupDate: snapshot.data.tpepPickupDatetime,
-                          dropoffDate: snapshot.data.tpepDropoffDatetime,
-                          binisYeri: snapshot.data.baslangicNoktasi,
-                          inisYeri: snapshot.data.bitisNoktasi,
-                          passengerCount: snapshot.data.passengerCount,
-                          tripDistance: snapshot.data.tripDistance,
-                          totalAmount: snapshot.data.totalAmount,
+                        return MapTripInformationWidget(
+                          pickupDate: snapshot.data["taxiDatas"]
+                                  ["tpep_pickup_datetime"]
+                              .toString(),
+                          dropoffDate: snapshot.data["taxiDatas"]
+                                  ["tpep_dropoff_datetime"]
+                              .toString(),
+                          pickupLocation: snapshot.data["pickupLocation"]
+                              ["Borough"],
+                          dropoffLocation: snapshot.data["dropoffLocation"]
+                              ["Borough"],
+                          passengerCount: snapshot.data["taxiDatas"]
+                              ["passenger_count"],
+                          tripDistance: snapshot.data["taxiDatas"]
+                              ["trip_distance"],
+                          totalAmount: snapshot.data["taxiDatas"]
+                              ["total_amount"],
                         );
                       }),
                 ),
@@ -149,66 +156,56 @@ class _Tip3HaritaSayfasiState extends State<Tip3HaritaSayfasi> {
     );
   }
 
-  Future<BirlestirilmisVeriler> getData(secilenTarih) async {
-    var baslangicTarihi = int.parse(
-        (DateTime.parse(secilenTarih.toString()).millisecondsSinceEpoch / 1000)
+  Future<Map> getData(selectedDate) async {
+    List taxiDatas = [];
+    //filter selected day.
+    var startDate = int.parse(
+        (DateTime.parse(selectedDate.toString()).millisecondsSinceEpoch / 1000)
             .toStringAsFixed(0));
-    var enUzunMesafe = 0;
-
-    List veriler = [];
 
     final databaseReference = FirebaseFirestore.instance;
 
     var snapshot = await databaseReference
         .collection("veriler")
         .orderBy("tpep_pickup_datetime")
-        .startAt([baslangicTarihi])
-        .endAt([baslangicTarihi + 86400])
+        .startAt([startDate])
+        .endAt([startDate + 86400])
         .limit(1000)
         .get();
 
-    //firestoreden gelen veriler alındı ve diziye atandı.
+    //firestore snapshots data add to list
     for (var item in snapshot.docs) {
-      var veri = item.data();
-      veriler.add(veri);
+      var data = item.data();
+      taxiDatas.add(data);
     }
-    //diziye atanan verilerden en yüksek mesafeli yolculuk bulundu. veriler[0] dizisine atandı.
-    for (var i = 0; i < veriler.length; i++) {
-      if (veriler[0]["trip_distance"] < veriler[i]["trip_distance"]) {
-        veriler[0] = veriler[i];
+    //find the longest distance
+    for (var i = 0; i < taxiDatas.length; i++) {
+      if (taxiDatas[0]["trip_distance"] < taxiDatas[i]["trip_distance"]) {
+        taxiDatas[0] = taxiDatas[i];
       }
     }
 
-    //yolculuk tespit edildi. ui de gösterilmek için hazırlanıyor.
-    //veri başlangıç lokasyonu bulunuyor.
+    //success. process to show ui
+    //find pickup location
     var puLocationQuery = await databaseReference
         .collection("lokasyonlar")
-        .where("LocationID", isEqualTo: int.parse(veriler[0]["PULocationID"]))
+        .where("LocationID", isEqualTo: int.parse(taxiDatas[0]["PULocationID"]))
         .get();
 
-    var baslangicNoktasi = puLocationQuery.docs[0].data();
-    //veri bitiş lokasyonu bulunuyor.
+    //find dropoff location
     var doLocationQuery = await databaseReference
         .collection("lokasyonlar")
-        .where("LocationID", isEqualTo: int.parse(veriler[0]["DOLocationID"]))
+        .where("LocationID", isEqualTo: int.parse(taxiDatas[0]["DOLocationID"]))
         .get();
 
-    var bitisNoktasi = doLocationQuery.docs[0].data();
-
-    //alınan veri bilgileri, başlangıç bilgileri, bitiş bilgileri alınır ve taksiverileri
-    //isimli listeye atanır.
-    Map<String, dynamic> taksiVerileri = {
-      "veriler": veriler[0],
-      "baslangicNoktasi": baslangicNoktasi,
-      "bitisNoktasi": bitisNoktasi
+    //merge taxi datas, pickup location and dropoff location. add to map.
+    Map<String, dynamic> taxiDataMap = {
+      "taxiDatas": taxiDatas[0],
+      "pickupLocation": puLocationQuery.docs[0].data(),
+      "dropoffLocation": doLocationQuery.docs[0].data()
     };
 
-    // liste birlestirilmis veri kısmıyla yeni bir listeye dönüştürülür.
-    var birlestirilmisVeri =
-        BirlestirilmisVeriler.fromJsonFormattedDateWithCoordinates(
-            taksiVerileri);
-
-    return birlestirilmisVeri;
+    return taxiDataMap;
   }
 
   void showPinsOnMap(LatLng sourceLocation, LatLng destLocation) {

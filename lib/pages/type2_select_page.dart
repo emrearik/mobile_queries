@@ -1,21 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:yazlab2_mobil_sorgular/data/TaksiVerileri.dart';
-import 'package:yazlab2_mobil_sorgular/data/Tarih.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip2_view.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip2_view.dart';
-import 'package:yazlab2_mobil_sorgular/theme/top_bar.dart';
-import 'package:yazlab2_mobil_sorgular/widgets/yolculuk_bilgisi_widget.dart';
+import 'package:yazlab2_mobil_sorgular/data/Date.dart';
+import 'package:yazlab2_mobil_sorgular/pages/pages.dart';
+import 'package:yazlab2_mobil_sorgular/theme/themes.dart';
 import 'package:date_range_picker/date_range_picker.dart' as DateRangePicker;
 import 'package:intl/intl.dart';
 
-class Tip2Sayfasi extends StatefulWidget {
+class Type2SelectPage extends StatefulWidget {
   @override
-  _Tip2SayfasiState createState() => _Tip2SayfasiState();
+  _Type2SelectPageState createState() => _Type2SelectPageState();
 }
 
-class _Tip2SayfasiState extends State<Tip2Sayfasi> {
-  var selectedLokasyon;
+class _Type2SelectPageState extends State<Type2SelectPage> {
+  var selectedLocation;
   DateTime _startDate = DateTime.utc(2020, 12, 1, 0, 0, 0);
   DateTime _endDate =
       (DateTime.utc(2020, 12, 2, 0, 0, 0)).add(new Duration(days: 1));
@@ -75,7 +72,7 @@ class _Tip2SayfasiState extends State<Tip2Sayfasi> {
                         ),
                       ),
                       Text(
-                        "İki Tarih Arasında Belirli Bir \nLokasyondan Hareket Eden Araç Sayısı",
+                        "Number of Vehicles Departing From\n A Given Location Between Two Dates",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -131,7 +128,7 @@ class _Tip2SayfasiState extends State<Tip2Sayfasi> {
                             ),
                           ),
                           Text(
-                            "Tarih Seçimi",
+                            "Select Date",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontFamily: 'Poppins',
@@ -191,12 +188,12 @@ class _Tip2SayfasiState extends State<Tip2Sayfasi> {
                           if (!snapshot.hasData) {
                             return CircularProgressIndicator();
                           } else {
-                            List<DropdownMenuItem> lokasyonVerileri = [];
+                            List<DropdownMenuItem> locationDatas = [];
                             for (int i = 0;
                                 i < snapshot.data.docs.length;
                                 i++) {
                               DocumentSnapshot snap = snapshot.data.docs[i];
-                              lokasyonVerileri.add(
+                              locationDatas.add(
                                 DropdownMenuItem(
                                   child: Text(
                                     snap["LocationID"].toString() +
@@ -218,15 +215,15 @@ class _Tip2SayfasiState extends State<Tip2Sayfasi> {
                                   child: DropdownButtonHideUnderline(
                                     child: DropdownButton(
                                       isExpanded: true,
-                                      items: lokasyonVerileri,
-                                      onChanged: (lokasyonValue) {
+                                      items: locationDatas,
+                                      onChanged: (locationValue) {
                                         setState(() {
-                                          selectedLokasyon = lokasyonValue;
+                                          selectedLocation = locationValue;
                                         });
                                       },
-                                      value: selectedLokasyon,
+                                      value: selectedLocation,
                                       hint: Text(
-                                        "Lokasyon seçiniz...",
+                                        "Select Location",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -278,7 +275,7 @@ class _Tip2SayfasiState extends State<Tip2Sayfasi> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              "Seçilen Başlangıç Tarihi: ${DateFormat('dd/MM/yyyy').format(_startDate).toString()}",
+                              "Selected Start Date : ${DateFormat('dd/MM/yyyy').format(_startDate).toString()}",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'Poppins',
@@ -300,7 +297,7 @@ class _Tip2SayfasiState extends State<Tip2Sayfasi> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              "Seçilen Bitiş Tarihi: ${DateFormat('dd/MM/yyyy').format(_endDate).toString()}",
+                              "Selected End Date: ${DateFormat('dd/MM/yyyy').format(_endDate).toString()}",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'Poppins',
@@ -322,14 +319,13 @@ class _Tip2SayfasiState extends State<Tip2Sayfasi> {
               ),
               backgroundColor: Color.fromRGBO(253, 216, 53, 1),
               onPressed: () {
-                Tarih tarih =
-                    new Tarih(startDate: _startDate, endDate: _endDate);
+                Date date = new Date(startDate: _startDate, endDate: _endDate);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Tip2SayfaVerileri(
-                      tarih: tarih,
-                      secilenLokasyon: selectedLokasyon,
+                    builder: (context) => Type2Page(
+                      date: date,
+                      selectedLocation: selectedLocation,
                     ),
                   ),
                 );

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:yazlab2_mobil_sorgular/pages/tip3_mapView.dart';
+import 'package:yazlab2_mobil_sorgular/pages/type3_map_page.dart';
 import 'package:yazlab2_mobil_sorgular/theme/top_bar.dart';
 import 'package:intl/intl.dart';
 
-class Tip3Sayfasi extends StatefulWidget {
+class Type3SelectPage extends StatefulWidget {
   @override
-  _Tip3SayfasiState createState() => _Tip3SayfasiState();
+  _Type3SelectPageState createState() => _Type3SelectPageState();
 }
 
-class _Tip3SayfasiState extends State<Tip3Sayfasi> {
+class _Type3SelectPageState extends State<Type3SelectPage> {
   DateTime _selectedDate = DateTime.utc(2020, 12, 1, 0, 0, 0);
 
   showSelectedDate(BuildContext context) async {
@@ -35,7 +35,7 @@ class _Tip3SayfasiState extends State<Tip3Sayfasi> {
               Container(
                 margin: EdgeInsets.all(30),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     GestureDetector(
                       onTap: () {
@@ -56,14 +56,17 @@ class _Tip3SayfasiState extends State<Tip3Sayfasi> {
                         ),
                       ),
                     ),
-                    Text(
-                      "Belirli Bir Gündeki En Uzun Seyehat",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        fontFamily: 'Poppins',
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+                      child: Text(
+                        "The Longest Trips \nof The Selected Date",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          fontFamily: 'Poppins',
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -113,7 +116,7 @@ class _Tip3SayfasiState extends State<Tip3Sayfasi> {
                           ),
                         ),
                         Text(
-                          "Tarih Seçimi",
+                          "Select Date",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Poppins',
@@ -157,7 +160,7 @@ class _Tip3SayfasiState extends State<Tip3Sayfasi> {
                     ),
                     SizedBox(width: 10),
                     Text(
-                      "Seçilen Tarih : ${DateFormat('dd/MM/yyyy').format(_selectedDate).toString()}",
+                      "Selected Date : ${DateFormat('dd/MM/yyyy').format(_selectedDate).toString()}",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Poppins',
@@ -176,12 +179,12 @@ class _Tip3SayfasiState extends State<Tip3Sayfasi> {
             ),
             backgroundColor: Color.fromRGBO(253, 216, 53, 1),
             onPressed: () {
-              final DateTime secilenTarih = _selectedDate;
+              final DateTime selectedDate = _selectedDate;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Tip3HaritaSayfasi(
-                    secilenTarih: secilenTarih,
+                  builder: (context) => Type3MapPage(
+                    selectedDate: selectedDate,
                   ),
                 ),
               );
