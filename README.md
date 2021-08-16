@@ -21,5 +21,24 @@ The New York City Taxi and Limousine Commission (TLC) deals with yellow cabs, gr
 - [flutter_polyline_points](https://pub.dev/packages/flutter_polyline_points)
 - [flutter_dotenv](https://pub.dev/packages/flutter_dotenv)
 
+## Usage
+ - Clone the repository.
+   ```
+   git clone https://github.com/emrearik/mobile_queries.git
+   ```
+
+ - Go to android/local.properties file and add your API key here.
+   ```
+   googleMap.apiKey=<API_KEY_HERE>
+   ```
+   
+ - Create root/lib/.env file and add your API key here.
+   ```
+   GOOGLE_MAP_API_KEY="<API_KEY_HERE>"
+   ```
+   
+ - Debug and run project.
+
+
 ## Design
 ![Design](https://i.imgur.com/WWo5uFE.jpeg "Design")
