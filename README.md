@@ -22,7 +22,7 @@ The New York City Taxi and Limousine Commission (TLC) deals with yellow cabs, gr
 - [flutter_dotenv](https://pub.dev/packages/flutter_dotenv)
 
 ## Usage
- - Clone the repository.
+ - Clone the repository with terminal.
    ```
    git clone https://github.com/emrearik/mobile_queries.git
    ```
